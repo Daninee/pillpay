@@ -29,7 +29,7 @@ def send_sms_via_textbee(phone_number, message_text):
     }
     
     try:
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
         response.raise_for_status() # Check for HTTP errors
         return response.json()
     except requests.RequestException as e:
