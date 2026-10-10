@@ -7,6 +7,10 @@ from datetime import date
 from .models import Medication, MedicationSchedule, DoseLog
 import json
 
+
+
+
+
 @login_required
 def medication_list(request):
     schedules = MedicationSchedule.objects.filter(patient=request.user, is_active=True).select_related('medication')
@@ -125,3 +129,17 @@ def api_dose_confirm(request):
             return JsonResponse({'success': True, 'message': 'Dose confirmed!'})
         return JsonResponse({'success': True, 'message': 'Confirmed!'})
     return JsonResponse({'success': False})
+
+
+
+
+from .sms_utils import send_sms_via_textbee  # if it's in a separate file
+
+# Send a confirmation SMS to the patient
+if user.phone_number:
+    result = send_sms_via_textbee(
+        user.phone_number,
+        f"PillPal: Your reminder for {medication.name} has been set. "
+        f"You'll receive SMS alerts at the scheduled times."
+    )
+    print(f"[TextBee] {result}")  # shows in Render Logs
