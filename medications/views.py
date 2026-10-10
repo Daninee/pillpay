@@ -133,13 +133,4 @@ def api_dose_confirm(request):
 
 
 
-from .sms_utils import send_sms_via_textbee  # if it's in a separate file
 
-# Send a confirmation SMS to the patient
-if user.phone_number:
-    result = send_sms_via_textbee(
-        user.phone_number,
-        f"PillPal: Your reminder for {medication.name} has been set. "
-        f"You'll receive SMS alerts at the scheduled times."
-    )
-    print(f"[TextBee] {result}")  # shows in Render Logs
