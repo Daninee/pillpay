@@ -6,6 +6,34 @@ from datetime import timedelta, date
 from medications.models import MedicationSchedule, DoseLog, Medication
 from accounts.models import User, CaregiverPatient
 import json
+import os 
+import requests
+
+def send_sms_via_textbee(phone_number, message_text):
+    api_key = os.environ.get('TEXTBEE_API_KEY')
+    device_id = os.environ.get('TEXTBEE_DEVICE_ID')
+    
+    if not api_key or not device_id:
+        return {"error": "TextBee credentials not set"}
+
+    url = f"https://api.textbee.dev/api/v1/gateway/devices/{device_id}/send-sms"
+    
+    payload = {
+        "recipients": [phone_number],
+        "message": message_text
+    }
+    
+    headers = {
+        'x-api-key': api_key,
+        'Content-Type': 'application/json'
+    }
+    
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status() # Check for HTTP errors
+        return response.json()
+    except requests.RequestException as e:
+        return {"error": str(e)}
 
 def landing(request):
     if request.user.is_authenticated:
@@ -17,6 +45,8 @@ def handler404(request, exception):
 
 def handler500(request):
     return render(request, 'core/500.html', status=500)
+
+
 
 @login_required
 def dashboard(request):
